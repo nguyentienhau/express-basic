@@ -1,39 +1,26 @@
-const accountRouter = require("./account");
-const adminRouter = require("./admin");
-const cartRouter = require("./cart");
-const categoryRouter = require("./category");
-const collectionRouter = require("./collection");
-const customerRouter = require("./customer");
-const invoiceRouter = require("./invoice");
-const orderRouter = require("./order");
-const productRouter = require("./product");
+const basicRouter = require("./basic");
+const customRouters = require("./custom");
 
-const routers = [
-	...accountRouter,
-	...adminRouter,
-	...cartRouter,
-	...categoryRouter,
-	...collectionRouter,
-	...customerRouter,
-	...invoiceRouter,
-	...orderRouter,
-	...productRouter,
-];
+module.exports = function (app, database, tableNames = ["account"], initRouters = customRouters) {
+	const routers = tableNames.reduce(function (accumulator, tableName) {
+		const basicRouters = basicRouter(tableName, "api");
 
-function routerConfig(app, queryData, checkConnection) {
-	routers.forEach((router) => {
-		app[router.method](router.path, (request, response) => {
-			if (checkConnection()) {
-				router.func(request, response, queryData);
+		return accumulator.concat([
+			basicRouters.create(),
+			basicRouters.all(),
+			basicRouters.read(),
+			basicRouters.update(),
+			basicRouters.delete(),
+		]);
+	}, initRouters);
+
+	routers.forEach(function(router) {
+		app[router.method.toLowerCase()](router.path, function (request = {}, response = {}) {
+			if (database.connection.check()) {
+				router.handle(request, response, database.table);
 			} else {
-				response.status(400).json({
-					message: "Connect database failure",
-				});
+				response.status(400).json({ ok: false, message: "Connect database failure" });
 			}
 		});
 	});
-}
-
-module.exports = {
-	routerConfig,
 };

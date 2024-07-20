@@ -4,106 +4,110 @@ create database express_basic;
 
 use express_basic;
 
-create table accounts(
+create table account (
 	id int primary key auto_increment,
 	username varchar(255) not null unique,
 	password varchar(255) not null,
-	fullName varchar(255) not null,
-	role enum('customer', 'admin') not null
+	full_name varchar(255) not null,
+	role enum('customer', 'admin') not null,
+	created_date datetime default current_timestamp,
+	modified_date datetime default current_timestamp on update current_timestamp
 );
 
-create table customers(
+create table customer (
 	id int primary key auto_increment,
-	accountId int not null unique,
+	account_id int not null unique,
 	address varchar(255),
 	birthday datetime default current_timestamp
 );
 
-create table admins(
+create table admin (
 	id int primary key auto_increment,
-	accountId int not null unique
+	account_id int not null unique
 );
 
-create table products(
+create table product (
 	id int primary key auto_increment,
 	name varchar(255) not null,
 	price varchar(255) not null,
-	imageUrl varchar(255)
+	image_url varchar(255),
+	created_date datetime default current_timestamp,
+	modified_date datetime default current_timestamp on update current_timestamp
 );
 
-create table categories(
-	id int primary key auto_increment,
-	name varchar(255) not null
-);
-
-create table collections(
+create table category (
 	id int primary key auto_increment,
 	name varchar(255) not null,
-	createdDate datetime default current_timestamp,
-	expiredDate datetime default current_timestamp
+	created_date datetime default current_timestamp,
+	modified_date datetime default current_timestamp on update current_timestamp
 );
 
-create table carts(
+create table collection (
 	id int primary key auto_increment,
-	accountId int not null
+	name varchar(255) not null,
+	created_date datetime default current_timestamp,
+	modified_date datetime default current_timestamp on update current_timestamp,
+	expired_date datetime default current_timestamp
 );
 
-create table orders(
+create table cart (
 	id int primary key auto_increment,
-	accountId int not null,
-	shippingFee int default 0,
-	createdDate datetime default current_timestamp,
-	modifiedDate datetime on update current_timestamp
+	account_id int not null,
+	created_date datetime default current_timestamp,
+	modified_date datetime default current_timestamp on update current_timestamp
 );
 
-create table invoices(
+create table order (
 	id int primary key auto_increment,
-	orderId int not null,
-	totalAmount int not null
+	account_id int not null,
+	total_amount int not null,
+	shipping_fee int default 0,
+	created_date datetime default current_timestamp,
+	modified_date datetime default current_timestamp on update current_timestamp
 );
 
-create table product_category(
-	productId int not null,
-	categoryId int not null,
-	primary key (productId, categoryId)
+create table product_category (
+	product_id int not null,
+	category_id int not null,
+	primary key (product_id, category_id)
 );
 
-create table product_collection(
-	productId int not null,
-	collectionId int not null,
-	primary key (productId, collectionId)
+create table product_collection (
+	product_id int not null,
+	collection_id int not null,
+	primary key (product_id, collection_id)
 );
 
-create table product_cart(
-	productId int not null,
-	cartId int not null,
-	primary key (productId, cartId)
+create table product_cart (
+	product_id int not null,
+	cart_id int not null,
+	quantity int default 1,
+	primary key (product_id, cart_id)
 );
 
-create table product_order(
-	productId int not null,
-	orderId int not null,
-	primary key (productId, orderId)
+create table product_order (
+	product_id int not null,
+	order_id int not null,
+	quantity int default 1,
+	primary key (product_id, order_id)
 );
 
-alter table customers add foreign key (accountId) references accounts(id);
+alter table customer add foreign key (account_id) references account(id);
 
-alter table admins add foreign key (accountId) references accounts(id);
+alter table admin add foreign key (account_id) references account(id);
 
-alter table product_category add foreign key (productId) references products(id);
-alter table product_category add foreign key (categoryId) references categories(id);
+alter table product_category add foreign key (product_id) references product(id);
+alter table product_category add foreign key (category_id) references category(id);
 
-alter table product_collection add foreign key (productId) references products(id);
-alter table product_collection add foreign key (collectionId) references collections(id);
+alter table product_collection add foreign key (product_id) references product(id);
+alter table product_collection add foreign key (collection_id) references collection(id);
 
-alter table carts add foreign key (accountId) references accounts(id);
+alter table cart add foreign key (account_id) references account(id);
 
-alter table product_cart add foreign key (productId) references products(id);
-alter table product_cart add foreign key (cartId) references carts(id);
+alter table product_cart add foreign key (product_id) references product(id);
+alter table product_cart add foreign key (cart_id) references cart(id);
 
-alter table orders add foreign key (accountId) references accounts(id);
+alter table order add foreign key (account_id) references account(id);
 
-alter table product_order add foreign key (productId) references products(id);
-alter table product_order add foreign key (orderId) references orders(id);
-
-alter table invoices add foreign key (orderId) references orders(id);
+alter table product_order add foreign key (product_id) references product(id);
+alter table product_order add foreign key (order_id) references order(id);

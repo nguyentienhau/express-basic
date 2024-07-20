@@ -23,7 +23,7 @@
 				"strings": true,
 				"identifiers": true,
 				"lang": "en_US",
-				"skipWords": ["dict", "bool", "utils", "func", "mysql"],
+				"skipWords": ["bool", "utils", "mysql", "localhost"],
 				"skipIfMatch": ["http://[^s]*"],
 				"skipWordIfMatch": ["^foobar.*$"],
 				"minLength": 3
