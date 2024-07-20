@@ -14,7 +14,8 @@
 		"format:fix": "prettier . --write"
 	},
 	"dependencies": {
-		"express": "^4.19.2"
+		"express": "^4.19.2",
+		"mysql": "^2.18.1"
 	},
 	"devDependencies": {
 		"eslint": "^8.57.0",
