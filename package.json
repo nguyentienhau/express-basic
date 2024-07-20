@@ -1,0 +1,25 @@
+{
+	"name": "express-basic",
+	"version": "1.0.0",
+	"author": "Nguyen Tien Hau",
+	"description": "Express Basic Project",
+	"license": "ISC",
+	"main": "src/index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "nodemon src/index.js",
+		"lint:check": "eslint **/*.{js,jsx,ts,tsx}",
+		"lint:fix": "eslint **/*.{js,jsx,ts,tsx} --fix",
+		"format:check": "prettier . --check",
+		"format:fix": "prettier . --write"
+	},
+	"dependencies": {
+		"express": "^4.19.2"
+	},
+	"devDependencies": {
+		"eslint": "^8.57.0",
+		"eslint-plugin-spellcheck": "^0.0.20",
+		"nodemon": "^3.1.4",
+		"prettier": "^3.3.3"
+	}
+}
