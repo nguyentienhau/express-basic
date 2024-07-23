@@ -57,7 +57,7 @@ create table cart (
 	modified_date datetime default current_timestamp on update current_timestamp
 );
 
-create table order (
+create table `order` (
 	id int primary key auto_increment,
 	account_id int not null,
 	total_amount int not null,
@@ -107,7 +107,7 @@ alter table cart add foreign key (account_id) references account(id);
 alter table product_cart add foreign key (product_id) references product(id);
 alter table product_cart add foreign key (cart_id) references cart(id);
 
-alter table order add foreign key (account_id) references account(id);
+alter table `order` add foreign key (account_id) references account(id);
 
 alter table product_order add foreign key (product_id) references product(id);
-alter table product_order add foreign key (order_id) references order(id);
+alter table product_order add foreign key (order_id) references `order`(id);
