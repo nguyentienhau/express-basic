@@ -1,13 +1,13 @@
-module.exports = function (tableName = "account", prefix = "api") {
+module.exports = function (tableName = "account", basicQueries = {}, prefix = "api") {
 	return {
 		create() {
 			return {
 				path: `/${prefix}/${tableName}`,
 				method: "post",
-				handle(request = {}, response = {}, table) {
+				handle(request = {}, response = {}) {
 					const { object = {} } = request.body;
 
-					table(tableName).insert(object).query(function (error, rows, fields) {
+					basicQueries.insert(object).query(function (error, rows, fields) {
 						if (error) {
 							response.status(error.code).json({ ok: false, message: error.message });
 						} else {
@@ -21,10 +21,10 @@ module.exports = function (tableName = "account", prefix = "api") {
 			return {
 				path: `/${prefix}/${tableName}/all`,
 				method: "get",
-				handle(request = {}, response = {}, table) {
+				handle(request = {}, response = {}) {
 					const { fields = [], conditions = {} } = request.body;
 
-					table(tableName).select(...fields).where(conditions).query(function (error, rows, fields) {
+					basicQueries.select(...fields).where(conditions).query(function (error, rows, fields) {
 						if (error) {
 							response.status(error.code).json({ ok: false, message: error.message });
 						} else {
@@ -38,11 +38,11 @@ module.exports = function (tableName = "account", prefix = "api") {
 			return {
 				path: `/${prefix}/${tableName}/:id`,
 				method: "get",
-				handle(request = {}, response = {}, table) {
+				handle(request = {}, response = {}) {
 					const { id = 0 } = request.params;
 					const { fields = [], conditions = {} } = request.body;
 
-					table(tableName).select(...fields).where({ ...conditions, id }).query(function (error, rows, fields) {
+					basicQueries.select(...fields).where({ ...conditions, id }).query(function (error, rows, fields) {
 						if (error) {
 							response.status(error.code).json({ ok: false, message: error.message });
 						} else {
@@ -56,11 +56,11 @@ module.exports = function (tableName = "account", prefix = "api") {
 			return {
 				path: `/${prefix}/${tableName}/:id`,
 				method: "put",
-				handle(request = {}, response = {}, table) {
+				handle(request = {}, response = {}) {
 					const { id = 0 } = request.params;
-					const { object = {} , conditions = {} } = request.body;
+					const { object = {}, conditions = {} } = request.body;
 
-					table(tableName).update(object).where({ ...conditions, id }).query(function (error, rows, fields) {
+					basicQueries.update(object).where({ ...conditions, id }).query(function (error, rows, fields) {
 						if (error) {
 							response.status(error.code).json({ ok: false, message: error.message });
 						} else {
@@ -74,11 +74,11 @@ module.exports = function (tableName = "account", prefix = "api") {
 			return {
 				path: `/${prefix}/${tableName}/:id`,
 				method: "delete",
-				handle(request = {}, response = {}, table) {
+				handle(request = {}, response = {}) {
 					const { id = 0 } = request.params;
 					const { conditions = {} } = request.body;
 
-					table(tableName).delete().where({ ...conditions, id }).query(function (error, rows, fields) {
+					basicQueries.delete().where({ ...conditions, id }).query(function (error, rows, fields) {
 						if (error) {
 							response.status(error.code).json({ ok: false, message: error.message });
 						} else {
@@ -89,5 +89,4 @@ module.exports = function (tableName = "account", prefix = "api") {
 			};
 		},
 	};
-}
-
+};

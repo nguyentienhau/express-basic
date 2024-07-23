@@ -1,9 +1,9 @@
-const basicRouter = require("./basic");
+const routerLib = require("../libs/router");
 const customRouters = require("./custom");
 
-module.exports = function (app, database, tableNames = ["account"], initRouters = customRouters) {
+module.exports = function (app, database, tableNames = ["account"]) {
 	const routers = tableNames.reduce(function (accumulator, tableName) {
-		const basicRouters = basicRouter(tableName, "api");
+		const basicRouters = routerLib(tableName, database.table(tableName), "api");
 
 		return accumulator.concat([
 			basicRouters.create(),
@@ -12,12 +12,12 @@ module.exports = function (app, database, tableNames = ["account"], initRouters 
 			basicRouters.update(),
 			basicRouters.delete(),
 		]);
-	}, initRouters);
+	}, customRouters);
 
-	routers.forEach(function(router) {
+	routers.forEach(function (router) {
 		app[router.method.toLowerCase()](router.path, function (request = {}, response = {}) {
 			if (database.connection.check()) {
-				router.handle(request, response, database.table);
+				router.handle(request, response);
 			} else {
 				response.status(400).json({ ok: false, message: "Connect database failure" });
 			}
